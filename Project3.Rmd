@@ -1,0 +1,311 @@
+---
+title: "U.S. Chronic Disease Indicators (CDI)"
+author: "[Team name: CUNY VERSE - `r format(Sys.Date(), '%B %d, %Y')`](https://www.linkedin.com/in/kleberperez/)"
+output: 
+  html_document:
+    code_folding: show
+    theme: flatly
+    highlight: pygments
+    css: ./p3css.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("RMySQL")
+# 1. Library
+library(RMySQL)
+library(tidyverse)
+library(kableExtra)
+library(plotly)
+library(ggplot2)
+```
+
+
+## Load [data source](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi) into an R dataframe using MySQL RDBMS
+
+> [Centers for Disease Control and Prevention (CDC)](https://www.cdc.gov/) - Division of Population Health provides cross-cutting set of 124 indicators that were developed by consensus and that allows states and territories and large metropolitan areas to uniformly define, collect, and report chronic disease data that are important to public health practice and available for states, territories and large metropolitan areas. In addition to providing access to state-specific indicator data, the CDI web site serves as a gateway to additional information and data resources. 
+
+```{r}
+# 2. variables Settings
+db_user <- 'root'
+db_password <- ''
+db_name <- 'uscdi'
+db_host <- '127.0.0.1' # localhost for local access
+db_port <- 3306
+
+# 3. Read data from db
+mydb <-  dbConnect(MySQL(), user = db_user, password = db_password,
+                 dbname = db_name, host = db_host, port = db_port)
+s <- paste0("SELECT DISTINCT YearStart, YearEnd, Topic, LocationAbbr FROM USChronicDiseaseIndicators WHERE LocationAbbr <> 'US';")
+rs <- dbSendQuery(mydb, s)
+df <-  fetch(rs, n = -1)
+on.exit(dbDisconnect(mydb))
+
+#uf <- df %>% gather(Year, n, YearStart:YearEnd)
+kable(df) %>%
+  kable_styling() %>%
+  scroll_box(height = "500px")
+
+
+```
+
+## Summary
+
+```{r df}
+summary(df)
+```
+
+## Including Plots
+
+```{r, echo=FALSE}
+f <- as.factor(df$Topic)
+levels(f)
+plot(f, df$YearStart)
+
+```
+
+
+
+## BEGIN YOHANNES * * *
+
+
+
+<!-- --- -->
+<!-- title: "Project - Data Science Skills" -->
+<!-- author: "Team name : CUNY VERSE" -->
+<!-- date: "March 18, 2019" -->
+<!-- output: html_document -->
+<!-- --- -->
+
+<!-- ```{r setup, include=FALSE} -->
+<!-- knitr::opts_chunk$set(echo = TRUE) -->
+<!-- ``` -->
+
+##  Team Members
+  Mia Siracusa;
+  Javern;
+  Kleber Perez;
+  Yohannes Getahun Deboch
+  
+##  Introduction
+
+Data Science Skills Project focused on Exploratory Analysis of  US Chrnoic Disease Indicators DatA Set
+  
+##  Objective of the Project
+
+The objective of this project is to practice soft skill working in a virtual taem. During the project we practised collaborating, knowledge sharing and problem solving in a team remotely .
+Load the libraries
+```{r}
+library(tidyverse)
+library(Amelia)
+
+```
+# Approach
+
+For this data science skills project after having detiled discussion, we have decided to use US chronic disease indicators data proposed by Kleber (one of the team members)
+Using this data set we followed the following approach:
+1. Means of Communication: We created a Whatsapp group where we can share documents and make a group call to discuss how we should do the project. For the purpose of sharing data sets we have utilized Github and Rpubs . 
+2. Separate the work among the team members.
+3. Each individual do their part of the work.
+4. Combine everyone's work to make a final work.
+
+# Motivation
+
+Our motivation behind working as a team is due to the necessity of being able to effectivelly collaborate in a virtual environment . Working in a virtual team is essentail  as it will enhance one of the basic data science soft skills( which being effective communiction and collaboration). Nowadays people prefer more flexible work schedule and working from home due to the inherent disire of maintaing work and life balance. This project has enabled us to practice how to mantain  work and life balance working in a virtual team.
+
+# Data information
+For this data Science skills project we're using us chronic disease indicators data set.
+
+# Data source
+The data was downloaded from the following website in csv format.
+https://chronicdata.cdc.gov/Chronic-Disease-Indicators/U-S-Chronic-Disease-Indicators-CDI-/g4ie-h725
+
+# Data on google drive
+https://drive.google.com/file/d/14lQCOt5gHB6lk9995hsgB5cxgH8BUMU1/view?usp=sharing
+
+# How to load it
+We've loaded the data using read.csv and for indicating missing values empty string was used as an identifier.
+Load the data
+```{r}
+# url <- "https://doc-04-28-docs.googleusercontent.com/docs/securesc/4gka1akk08hvpslffei635a9a065i68g/li4rhokegsnad94d1cg1n01qjkvbqgpc/1553011200000/07658601726910950510/07658601726910950510/14lQCOt5gHB6lk9995hsgB5cxgH8BUMU1?e=download&nonce=dj7n4jm3ie44c&user=07658601726910950510&hash=orscqeqh98gop1iet5s6gqlov65qn8o1"
+
+disease <- read.csv("USChronicDiseaseIndicators.csv", na.strings = "")
+```
+Getting an overview of the data
+```{r}
+glimpse(disease)
+```
+This data set has 519,718 observations and 34 variables. 
+```{r}
+head(disease)
+```
+```{r}
+tail(disease)
+```
+
+Table of summary Statistics
+```{r}
+summary(disease)
+```
+Visualization of missing value pattern. 
+From the data set we can visualize the missing value pattern. Read areas of the following graph indicated missing values. 
+```{r}
+missmap(disease)
+```
+
+From the summary statistics and missing value plot we can see that the data set has 37% missing values and most of them are in the following variables
+```{r}
+names(-which(colMeans(is.na(disease))>0.1))
+```
+
+# Count number of missing values in each column
+```{r}
+lapply(disease, function(x){sum(is.na(x))})
+```
+
+
+# Tidying and Transformation
+
+Drop columns that have more than 10% missing
+```{r}
+disease_no_miss <- disease[,-which(colMeans(is.na(disease))>0.1)]
+```
+Dimension after dropping missing values
+```{r}
+dim(disease_no_miss)
+```
+After dropping missing value columns there are only 18 variables left. 
+
+Get a glimpse of the data.
+
+```{r}
+glimpse(disease_no_miss)
+```
+
+
+
+# Exploratory Data Analysis
+
+Top 5 location with chronic disease
+```{r}
+disease_no_miss %>%
+    count(LocationDesc)%>%
+    arrange(desc(n)) %>%
+    head()
+```
+Bottom 5 location with chronic disease
+```{r}
+disease_no_miss %>%
+    count(LocationDesc)%>%
+    arrange(-desc(n)) %>%
+    head()
+```
+
+
+Top 5 Data Source with chronic disease
+```{r}
+disease_no_miss %>%
+    count(DataSource)%>%
+    arrange(desc(n)) %>%
+    head()
+```
+
+Bottom 5 Data Source with chronic disease
+```{r}
+disease_no_miss %>%
+    count(DataSource)%>%
+    arrange(-desc(n)) %>%
+    head()
+```
+
+Bar plot of Chronic Diseases
+```{r}
+barplot(table(disease_no_miss$Topic), main = "Distribution of Chronic Disease Topics")
+```
+
+From the bar plot we can see that most of the chronic diseases are the following top 5
+```{r}
+disease_no_miss %>%
+    count(Topic)%>%
+    arrange(desc(n)) %>%
+    head()
+```
+
+Visualization of data value type
+```{r}
+barplot(table(disease_no_miss$DataValueType))
+```
+
+Top data value types are the following
+```{r}
+disease_no_miss %>%
+    count(DataValueType)%>%
+    arrange(desc(n)) %>%
+    head()
+```
+
+Stratification Category
+```{r}
+barplot(table(disease_no_miss$StratificationCategory1))
+```
+
+Data Value Type Plot
+```{r}
+barplot(table(disease_no_miss$DataValueTypeID))
+```
+
+
+
+<br />
+
+<div class="jumbotron jumbotron-fluid">
+
+## Conclusion
+
+> Real world data sets are often messy and have lot's of missing values. From the exploratory analysis we've found that Diabetes, Chronic Obstructive Pulmonary Disease, Cardiovascular Di seas, Arthritis are the most occurring chronic diseases. 
+From the overall analysis we've learned that the chronic diseases are a major concern in the USA though the data set is missing several necessary information.
+Arizona,Florida,Iowa have most chronic disease while Guam,Virgin Islands have least disease. 
+
+
+(1) Project 3 on rpubs.com, and SQL script and additional files uploaded on github.
+
+<div class=""> 
+<div class="alert alert-info" role="alert"> 
+ <p>
+  <a href="http://rpubs.com/kleberperez/477939" class="btn btn-default" role="button">&nbsp; rpubs.com/kleberperez &nbsp; </a> 
+  &nbsp; &nbsp; &nbsp;
+  <a href="https://github.com/kleberperez1/CUNY-SPS-Data607-Project3" target="_blank" class="btn btn-default" role="button"> &nbsp; github &nbsp; </a>
+ </p>
+</div> 
+</div> 
+
+</div>
+
+<br />
+
+* * *
+
+
+<br />
+<br />
+
+
+> Deliverables should include your SQL scripts and your R Markdown code, posted to GitHub. 
+
+
+
+<br />
+<br />
+
+> *Please email to: * <a href="#">teamcunyverse@sps.cuny.edu</a> *for any suggestion.*
+
+<footer class="border-top text-muted fixed-bottom">
+
+        DATA607 Project 3 - MSDS 2019 Program.
+
+</footer>
+
+\textbf{Text ignored: END of other links}
+
+
+
