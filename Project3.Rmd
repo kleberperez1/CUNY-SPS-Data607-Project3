@@ -1,5 +1,5 @@
 ---
-title: "U.S. Chronic Disease Indicators (CDI)"
+title: "DATA607 Project 3: Most Valued Data Science Skills"
 author: "[Team CUNY VERSE - `r format(Sys.Date(), '%B %d, %Y')`](https://www.linkedin.com/in/kleberperez/)"
 output: 
   html_document:
@@ -13,18 +13,21 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("RMySQL")
 # 1. Library
+library(DBI)
+library(RSQLite)
 library(RMySQL)
 library(tidyverse)
 library(kableExtra)
 library(plotly)
 library(ggplot2)
+library(Amelia)
+library(data.table)
+library(gganimate)
+library(gifski)
+library(plotly)
+library(ggmap)
+library(leaflet)
 ```
-
-
-## Load [data source](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi) into an R dataframe using MySQL RDBMS
-
-> [Centers for Disease Control and Prevention (CDC)](https://www.cdc.gov/) - Division of Population Health provides cross-cutting set of 124 indicators that were developed by consensus and that allows states and territories and large metropolitan areas to uniformly define, collect, and report chronic disease data that are important to public health practice and available for states, territories and large metropolitan areas. In addition to providing access to state-specific indicator data, the CDI web site serves as a gateway to additional information and data resources. 
-
 
 <div class="jumbotron jumbotron-fluid">
   <div class="container">
@@ -32,7 +35,7 @@ library(ggplot2)
   
   <h1 class="btn btn-info btn-block">Project 3</h1>
   <br />
-  <p class="lead">Project 3 on rpubs.com, SQL, R, scripts <br />and RMarkdown files uploaded on GitHub repo.<br />
+  <p class="lead">Project 3 on rpubs.com, SQL, R scripts <br />and RMarkdown files uploaded on GitHub repo.<br />
   </p>
   <hr class="my-4">Mia Siracusa &nbsp;&nbsp;
   <a class="btn btn-dark btn-lg" href="http://rpubs.com/miasiracusa" role="button">rpubs</a>
@@ -56,6 +59,68 @@ library(ggplot2)
 
 <br />
 
+  
+##  Introduction
+
+This project is used to identify the most valued data science skills. As a team, we have done a deep study in identifying some important skills. On the basis of our study we have categorized data science skills into `3` main groups:
+  
+  * **Soft Skills**
+    + Communication
+    + Collaboration
+    + Critical Thinking
+    + Problem Solving
+    + Learning
+    + Data Intuition
+  * **Hard Skills**
+    + Data Aqusistion and Analysis
+    + Data Vizualization
+    + Statistics and Probability
+    
+  * **Tools**
+    + MySQL, R
+
+As observed, the above skills are not exhaustive. For the purpose of identifying the most valued skills we decided to demonstrate our skills using a real world dataset. To this end, we have chosen US Chronic Disease Indicators (CDI).
+
+## Background
+
+[Centers for Disease Control and Prevention (CDC)](https://www.cdc.gov/) - Division of Population Health provides cross-cutting set of 124 indicators that were developed by consensus and that allows states and territories and large metropolitan areas to uniformly define, collect, and report chronic disease data that are important to public health practice and available for states, territories and large metropolitan areas. In addition to providing access to state-specific indicator data, the CDI web site serves as a gateway to additional information and data resources. 
+Chronic diseases represents 7 of the top 10 causes of death in the United States. They are defined broadly as conditions that last 1 year or more and require ongoing medical attention or limit activities of daily living or both. As we group, we would like to better understand the reasons behind the causes for Chronic Diseases. Going forward, this Project is designed to focus on the most valued skills used in Data Science in order to perform an Exploratory Analysis of the US Chrnoic Disease Indicators Dataset. 
+  
+## Objective
+
+To use our chosen dataset to discover what are the most valued skills used in Data Science while working in a virtual team. <br/> To also practice collaboration knowledge sharing and data analysis and problem solving.
+
+## Approach
+
+For this project after having detailed discussion, we have decided to use US chronic disease indicators data proposed by Kleber (one of the team members).
+Using this dataset, we followed the following approach:
+
+  * Means of Communication: 
+    + We created a Whatsapp group where we can share documents and make a group   calls to discuss how we should do the project. 
+    + For the purpose of sharing code and rough drafts we have utilized Github and Rpubs . 
+  * Separate / delegate the work among the team members.
+  * Each individual do their part of the work.
+  * Combine everyone's work to make a final work.
+
+## Motivation
+
+Our motivation behind working as a team is due to the necessity of being able to effectively collaborate in a virtual environment . Working in a virtual team is essential  as it will enhance two of the basic data science soft skills (communiction and collaboration). Nowadays people prefer a more flexible work schedule and working from home due to the inherent desire of maintaing work and life balance. This project has enabled us to practice how to mantain work and life balance working in a virtual team.
+
+## Data information
+
+The Dataset has 124 indicators that are divided in 18 groups. &nbsp;
+<div class="img-fluid img-thumbnail img-responsive">
+![](cdi.png)
+</div>
+
+## Data source
+
+The data was downloaded from the Center For Diseases Control and Prevention [website](https://chronicdata.cdc.gov/Chronic-Disease-Indicators/U-S-Chronic-Disease-Indicators-CDI-/g4ie-h725) in csv format.
+
+## How to load Dataset
+
+We loaded the [data](https://catalog.data.gov/dataset/u-s-chronic-disease-indicators-cdi) into an R dataframe using MySQL RDBMS
+
 ```{r}
 # 2. variables Settings
 db_user <- 'root'
@@ -63,7 +128,6 @@ db_password <- ''
 db_name <- 'uscdi'
 db_host <- '127.0.0.1' # localhost for local access
 db_port <- 3306
-
 # 3. Read data from db
 mydb <-  dbConnect(MySQL(), user = db_user, password = db_password,
                  dbname = db_name, host = db_host, port = db_port)
@@ -71,250 +135,210 @@ s <- paste0("SELECT DISTINCT YearStart, YearEnd, Topic, LocationAbbr FROM USChro
 rs <- dbSendQuery(mydb, s)
 df <-  fetch(rs, n = -1)
 on.exit(dbDisconnect(mydb))
+```
 
+This is a snapshot of the loaded dataset showing the indicator groups and the states connected with them.
+
+```{r}
 #uf <- df %>% gather(Year, n, YearStart:YearEnd)
 kable(df) %>%
-  kable_styling() %>%
+  kable_styling("striped", "hovered") %>%
   scroll_box(height = "500px")
-
-
 ```
 
-  
-##  Introduction
+<br/>We also loaded the data using read.csv for the purpose of indicating missing values of empty strings with an identifier
 
-Data Science Skills Project focused on Exploratory Analysis of  US Chrnoic Disease Indicators DatA Set
-  
-##  Objective of the Project
-
-The objective of this project is to practice soft skill working in a virtual taem. During the project we practised collaborating, knowledge sharing and problem solving in a team remotely .
-Load the libraries
 ```{r}
-library(tidyverse)
-library(Amelia)
-
+disease <- read.csv("USChronicDiseaseIndicators.csv", na.strings = "") #US_CDI.csv
 ```
-# Approach
 
-For this data science skills project after having detiled discussion, we have decided to use US chronic disease indicators data proposed by Kleber (one of the team members)
-Using this data set we followed the following approach:
-1. Means of Communication: We created a Whatsapp group where we can share documents and make a group call to discuss how we should do the project. For the purpose of sharing data sets we have utilized Github and Rpubs . 
-2. Separate the work among the team members.
-3. Each individual do their part of the work.
-4. Combine everyone's work to make a final work.
+## Overview of the data
 
-# Motivation
-
-Our motivation behind working as a team is due to the necessity of being able to effectivelly collaborate in a virtual environment . Working in a virtual team is essentail  as it will enhance one of the basic data science soft skills( which being effective communiction and collaboration). Nowadays people prefer more flexible work schedule and working from home due to the inherent disire of maintaing work and life balance. This project has enabled us to practice how to mantain  work and life balance working in a virtual team.
-
-# Data information
-For this data Science skills project we're using us chronic disease indicators data set.
-
-# Data source
-The data was downloaded from the following website in csv format.
-https://chronicdata.cdc.gov/Chronic-Disease-Indicators/U-S-Chronic-Disease-Indicators-CDI-/g4ie-h725
-
-# Data on google drive
-https://drive.google.com/file/d/14lQCOt5gHB6lk9995hsgB5cxgH8BUMU1/view?usp=sharing
-
-# How to load it
-We've loaded the data using read.csv and for indicating missing values empty string was used as an identifier.
-Load the data
-```{r}
-# url <- "https://doc-04-28-docs.googleusercontent.com/docs/securesc/4gka1akk08hvpslffei635a9a065i68g/li4rhokegsnad94d1cg1n01qjkvbqgpc/1553011200000/07658601726910950510/07658601726910950510/14lQCOt5gHB6lk9995hsgB5cxgH8BUMU1?e=download&nonce=dj7n4jm3ie44c&user=07658601726910950510&hash=orscqeqh98gop1iet5s6gqlov65qn8o1"
-
-disease <- read.csv("USChronicDiseaseIndicators.csv", na.strings = "")
-```
-Getting an overview of the data
 ```{r}
 glimpse(disease)
 ```
-This data set has 519,718 observations and 34 variables. 
+
+There are 519,718 observations and 34 variables. 
+
 ```{r}
-head(disease)
-```
-```{r}
-tail(disease)
+kable(head(disease, 10)) %>% kable_styling(font_size = 10) %>% scroll_box(height = "500px")
 ```
 
-Table of summary Statistics
+```{r}
+kable(tail(disease, 10)) %>% kable_styling(font_size = 10) %>% scroll_box(height = "500px")
+```
+
+### Table of summary Statistics
+
 ```{r}
 summary(disease)
 ```
-Visualization of missing value pattern. 
+
+### Visualization of missing value pattern. 
 From the data set we can visualize the missing value pattern. Read areas of the following graph indicated missing values. 
+
 ```{r}
-missmap(disease)
+missmap(disease, y.labels = F, y.at = F)
 ```
 
-From the summary statistics and missing value plot we can see that the data set has 37% missing values and most of them are in the following variables
+<br/>From the summary statistics and missing value plot we can see that the data set has 37% missing values and most of them are in the following variables.
+
 ```{r}
 names(-which(colMeans(is.na(disease))>0.1))
 ```
 
-# Count number of missing values in each column
+#### Count number of missing values in each column
+
 ```{r}
 lapply(disease, function(x){sum(is.na(x))})
 ```
 
-
-# Tidying and Transformation
+## Tidying and Transformation
 
 Drop columns that have more than 10% missing
+
 ```{r}
-disease_no_miss <- disease[,-which(colMeans(is.na(disease))>0.1)]
+disease_no_miss <- disease[, -which(colMeans(is.na(disease)) > 0.1)]
 ```
-Dimension after dropping missing values
+
+After dropping the columns with more than 10% missing values we saw how much the dataset was reduced. There are only 18 variables left.
+
 ```{r}
 dim(disease_no_miss)
-```
-After dropping missing value columns there are only 18 variables left. 
 
-Get a glimpse of the data.
+kable(head(disease_no_miss, 200)) %>%
+  kable_styling(bootstrap_options = "striped", font_size = 10) %>%
+  scroll_box(height = "500px")
+```
+
+Also here is another glimpse of the reduced dataset.
 
 ```{r}
 glimpse(disease_no_miss)
 ```
 
+## Exploratory Data Analysis
 
+### Top 5 location with chronic disease
 
-# Exploratory Data Analysis
-
-Top 5 location with chronic disease
 ```{r}
 disease_no_miss %>%
     count(LocationDesc)%>%
     arrange(desc(n)) %>%
-    head()
+    head(5) %>% kable() %>% kable_styling()
 ```
-Bottom 5 location with chronic disease
+
+### Bottom 5 location with chronic disease
+
 ```{r}
 disease_no_miss %>%
     count(LocationDesc)%>%
     arrange(-desc(n)) %>%
-    head()
+    head(5) %>% kable() %>% kable_styling()
 ```
 
+### Top 5 Data Source with chronic disease
 
-Top 5 Data Source with chronic disease
 ```{r}
 disease_no_miss %>%
     count(DataSource)%>%
     arrange(desc(n)) %>%
-    head()
+    head(5) %>% kable() %>% kable_styling()
 ```
 
-Bottom 5 Data Source with chronic disease
+### Bottom 5 Data Source with chronic disease
+
 ```{r}
 disease_no_miss %>%
     count(DataSource)%>%
     arrange(-desc(n)) %>%
-    head()
+    head(5) %>% kable() %>% kable_styling()
 ```
 
-Bar plot of Chronic Diseases
+### Bar plot of Chronic Diseases
+
 ```{r}
-barplot(table(disease_no_miss$Topic), main = "Distribution of Chronic Disease Topics")
+topic <- as.data.frame(table(disease_no_miss$Topic))
+ggplot(topic, aes(x=Var1, y =Freq, color = Var1))+
+  geom_bar(stat="identity") + ggtitle("Distribution of Chronic Disease Topics") + theme(legend.position = "none") + coord_flip() + xlab("Chronic Diseases")
+#barplot(table(disease_no_miss$Topic), main = "Distribution of Chronic Disease Topics")
 ```
 
-From the bar plot we can see that most of the chronic diseases are the following top 5
+<br/>From the bar plot we can see that most of the chronic diseases are the following top 5
+
 ```{r}
 disease_no_miss %>%
     count(Topic)%>%
     arrange(desc(n)) %>%
-    head()
+    head(5) %>% kable() %>% kable_styling()
 ```
 
-Visualization of data value type
+### Visualization of data value type
+
 ```{r}
-barplot(table(disease_no_miss$DataValueType))
+data_value_type <- as.data.frame(table(disease_no_miss$DataValueType))
+
+ggplot(data_value_type, aes(x=Var1, y =Freq))+
+  geom_bar(stat="identity") + ggtitle("Distribution of Data Value Types") + theme(legend.position = "none") + coord_flip() + xlab("Data Value Types")
 ```
 
-Top data value types are the following
+### Top data value types are the following
+
 ```{r}
 disease_no_miss %>%
     count(DataValueType)%>%
     arrange(desc(n)) %>%
-    head()
+    head(5) %>% kable() %>% kable_styling()
 ```
 
-Stratification Category
+### Stratification Category
+
 ```{r}
-barplot(table(disease_no_miss$StratificationCategory1))
+stratificationCat <- as.data.frame(table(disease_no_miss$StratificationCategory1))
+
+ggplot(stratificationCat, aes(x=Var1, y =Freq, fill = Var1))+
+  geom_bar(stat="identity") + ggtitle("Classification of Observants") + theme(legend.position = "none")+ xlab("Categories")
+
 ```
 
-Data Value Type Plot
-```{r}
-barplot(table(disease_no_miss$DataValueTypeID))
-```
+* * *
 
+We decided to take a closer look at one of the top 5 causes of chronic diseases.
 
-## BEGIN JAVERN * * *
+### Tobacco
 
-
-## Tobacco
-As mentioned earlier, Tobacco is one of the top Chronic Disease Indicator of preventable deaths in the US.
+As mentioned earlier, Tobacco is one of the top Chronic Disease Indicator of preventable deaths in the US. Smoking leads to disease and disability and harms nearly every organ of the body. Among the other indicator groups, using Tobacco is related to *cancer, heart disease, stroke, lung diseases, diabetes, and chronic obstructive pulmonary disease (COPD), which includes emphysema and chronic bronchitis*. You can view further details [<span style="color:blue">here</span> ](https://www.cdc.gov/tobacco/data_statistics/fact_sheets/fast_facts/index.htm)
 
 </div>
 
 <br />
 
-```{r, include=FALSE}
-library(DBI)
-library(RMySQL)
-library(RSQLite)
-library(tidyverse)
-library(kableExtra)
-library(gganimate)
-library(gifski)
-library(plotly)
-library(ggmap)
-library(leaflet)
-```
-
-
 ```{r}
 
-db_user <- 'root'   # newuser
-db_password <- ''   # pass
-db_name <- 'uscdi'
-db_host <- '127.0.0.1'  # for access to SQL Database hosted on Google Cloud
-db_port <- 3306
+mydb <-  dbConnect(MySQL(), user = db_user, password = db_password,
+                 dbname = db_name, host = db_host, port = db_port)
+s <- paste0("SELECT * FROM USChronicDiseaseIndicators WHERE Topic = 'Tobacco' AND LocationAbbr <> 'US';")
+rs <- dbSendQuery(mydb, s)
+tblTobacco <-  fetch(rs, n = -1)
+on.exit(dbDisconnect(mydb))
 
-drv <- dbDriver("MySQL")
-
-# creating tbdb connection object with RMysql package
-connect <- dbConnect(drv, user = db_user, password = db_password, dbname = db_name, host = db_host, port = db_port)
-
-tblTobacco <- dbGetQuery(connect, "SELECT * FROM USChronicDiseaseIndicators WHERE Topic = 'Tobacco' AND LocationAbbr <> 'US';" )
-```
-
-
-```{r}
 Tobacco_df <- tblTobacco
-
 dim(Tobacco_df)
-
 kable(head(Tobacco_df, 20)) %>% kable_styling(bootstrap_options = "striped", full_width = T,  font_size = 10) %>%  scroll_box(height = "500px")
-
 ```
 
 
 ```{r}
-#remove emply columns
 Tobacco_df <- Tobacco_df[!sapply(Tobacco_df, function(t) all(t == ""))]
-Tobacco_df <- Tobacco_df %>% select("YearEnd", "LocationAbbr", "Question", "DataValue", "Stratification1", "ResponseID") %>% separate(ResponseID, c("Latitude", "Longitude"), sep = ",")
+Tobacco_df <- Tobacco_df %>% select("YearEnd", "LocationAbbr", "Question", "DataValue", "Stratification1", ResponseID) %>% separate(ResponseID, c("Latitude", "Longitude"), sep = ",")
 
 #remove none digit elements from the observations in both longitude and latitude columns and then convert remaining characters to numeric
 Tobacco_df$Latitude <- as.numeric(unlist(str_remove(Tobacco_df$Latitude, "^[(]"))) 
 Tobacco_df$Longitude <- as.numeric(unlist(str_remove(Tobacco_df$Longitude, "[)]$")))
-
 #rename a few columns
 names(Tobacco_df)[c(1, 2, 5)] <- c("Year", "State", "Stratification")
-
 #If any cell for the row is empty then remove the row
 Tobacco_df <- Tobacco_df[!Tobacco_df$DataValue == "", ]
-
 ```
 
 
@@ -324,75 +348,63 @@ dim(Tobacco_df)
 kable(head(Tobacco_df, 100)) %>% kable_styling(font_size = 10) %>%  scroll_box(height = "500px")
 ```
 
-### Questions
+#### Questions observed
+
 These are the type of questions looked at concerning Tobacco
+
 ```{r}
 Questions <- unique(Tobacco_df$Question)
 kable(Questions) %>% kable_styling(font_size = 12) %>%  scroll_box(height = "300px")
-
 ```
 
-<br/>A Second Tobacco Dataframe was created because some of the DataValues are categorical (Yes, No) while others are numeric.The first Tobacco Dataframe now has 18681 obs with 7 variables.
-```{r}
+<br/>A second Tobacco Dataframe was created because some of the DataValues are categorical (Yes, No) while others are numeric.The first Tobacco Dataframe now has 18681 obs with 7 variables.
 
+```{r}
 #separate categorical datavalues from numerical ones and place in a new df
 Tobacco_df2 <- subset(Tobacco_df, Tobacco_df$DataValue == c("Yes","No"))
 dim(Tobacco_df2)
-
 kable(Tobacco_df2) %>% kable_styling(font_size = 10) %>%  scroll_box(height = "300px")
-
 #remove those placed in Tobacco_df2 from Tobacco_df
 new_Tobacco_df <- Tobacco_df[!(Tobacco_df$DataValue %in% Tobacco_df2$DataValue), ]
-
 #convert the datavalue column to numeric
-
 new_Tobacco_df$DataValue <- as.numeric(new_Tobacco_df$DataValue)
 new_Tobacco_df$Year <- as.numeric(new_Tobacco_df$Year)
-
 dim(new_Tobacco_df)
-
-
 ```
 
 <br />
 <div class="jumbotron jumbotron-fluid">
 
-### Exploration
+#### Exploration of Tobacco
 
 ```{r}
-
 ggplotly(ggplot(new_Tobacco_df, aes(x=State, y=Year, fill=Year)) +
   geom_bar(stat="identity") +  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.text=element_text(size=6)) + ggtitle("Data collected Over the years for States Concerning Tobacco"))
-
 ```
-<br/> Kansas had a lot to say as most reports came from that state
+
+<br/> Kansas had a lot to say as most reports came from that state. Among the states there seems to be heavier reports between the years of 2008 and 2010.
 
 
 ```{r}
-
 new_Tobacco_df %>% filter(Question == c("Current smokeless tobacco use among youth", "Current cigarette smoking among youth")) %>%  ggplot(aes(x = Year, y = DataValue, fill = Question)) + geom_bar(stat = "identity", position = position_dodge())+ ggtitle("Youth (Grade 9-12) Using Tobacco Over the Years") +  scale_fill_discrete(labels = c("Smokeless Tobacco", "Smoke Tobacco"))
-
-
 ```
-<br/>It is likely that if the yout is using smokeless Tobacco, then they'll smoke it too.
 
+<br/>It is likely that if the youth is using smokeless Tobacco, then they'll smoke it too because of how close the numbers are. They are both harmful. Everyday, someone younger than 18 tries their first smoking of Tobacco.
 
 
 ```{r}
-
 new_Tobacco_df %>% filter(!Stratification == "Overall") %>%  ggplot(aes(x= Stratification, y=Year, fill=Stratification)) +
   geom_bar(stat="identity") +  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.text=element_text(size=6)) + transition_time(round(Year)) + labs(title = "Year: {frame_time}")
-
 ```
+
 Based on this research, most of Tobacco customers are Male and the top race is White.
 
 ### Amount of Tobacco Product Excise Tax?
 
-Increasing the price of tabacco discourages people from buying them, especially youths. This way improvements in health will get better in the long term. Majority of the states did not excise tax from the Tobacco product.
+#### Increasing the price of tobacco discourages people from buying them, especially youths. With this structure put into place, improvements in health will get better in the long term. Majority of the states did not excise tax from the Tobacco product.
+
 ```{r}
-
 Tobacco_df2 %>%  filter(Question == "Amount of tobacco product excise tax") %>% ggplot(aes(x = DataValue)) + geom_bar() 
-
 ```
 
 </div>
@@ -402,16 +414,19 @@ Tobacco_df2 %>%  filter(Question == "Amount of tobacco product excise tax") %>% 
 <div class="jumbotron jumbotron-fluid">
 
 ### States that allow stronger local tobacco control and prevention laws
-<br/> Map below shows which States did and did not allow stronger laws.
+#### Map below shows which States allow stronger laws against Tobacco.
+
 ```{r}
-
 Tobacco_df2 %>%  filter(Question == "States that allow stronger local tobacco control and prevention laws") %>% ggplot(aes(x = DataValue)) + geom_bar() 
-
 ggmap::register_google(key = "AIzaSyAPKYO8wG3mQUqSL6Ym4HeSIjkZmCwwVP8")
+
+YesT<- Tobacco_df2 %>%  filter(Question == "States that allow stronger local tobacco control and prevention laws" & DataValue == "Yes")
+
 leaflet(options = leafletOptions(minZoom = 2, maxZoom = 8)) %>% 
-  addProviderTiles("Esri") %>% 
+  addProviderTiles(providers$Esri) %>% 
   setView(lng = -100.166666, lat = 48.166666, zoom = 4) %>% 
-  addMarkers(lng =Tobacco_df2$Longitude, lat = Tobacco_df2$Latitude, popup = Tobacco_df2$State, label = Tobacco_df2$DataValue)
+  addCircleMarkers(lng=YesT$Longitude, lat=YesT$Latitude, radius = 5)
+
 ```
 
 </div>
@@ -422,10 +437,9 @@ leaflet(options = leafletOptions(minZoom = 2, maxZoom = 8)) %>%
 
 ## Conclusion
 
-> Real world data sets are often messy and have lot's of missing values. From the exploratory analysis we've found that Diabetes, Chronic Obstructive Pulmonary Disease, Cardiovascular Di seas, Arthritis are the most occurring chronic diseases. 
-From the overall analysis we've learned that the chronic diseases are a major concern in the USA though the data set is missing several necessary information.
-Arizona,Florida,Iowa have most chronic disease while Guam,Virgin Islands have least disease. 
-
+> To conclude, team work is *very* important, especially in Data Science. Real world data sets are often messy and have lots of missing values. Data does not convert correctly the first time, file is incomplete or invalid an the list goes on. However all of these problems are solvable but can be time consuming. In the end, it is all done to get the results needed to present useful information to make better decisions.
+With the Data Science skills used such as communication and collaboration to carry out an exploratory analysis of this project, we were better able to understand the dataset. Chronic Diseases are a major concern in the USA. We have found that Diabetes, Chronic Obstructive Pulmonary Disease, Cardiovascular Disease, Arthritis are the most occurring chronic diseases. Arizona,Florida,Iowa have most chronic disease while Guam, Virgin Islands have least disease possibly because they are smaller.
+The dataset is missing several necessary details but with our practiced data science skills we were able to grasp a huge amount of information and gain a better insight of the dataset.   
 
 (1)  For project 3 on rpubs.com, SQL, R, scripts and RMarkdown files uploaded on GitHub.
   <br />
@@ -470,9 +484,9 @@ Arizona,Florida,Iowa have most chronic disease while Guam,Virgin Islands have le
   &nbsp; &nbsp; &nbsp;
   <a href="https://github.com/kleberperez1/CUNY-SPS-Data607-Project3" target="_blank" class="btn btn-default" role="button"> &nbsp; github &nbsp; </a>
  </p>
-</div> 
-</div> 
 
+</div> 
+</div> 
 </div>
 
 <br />
@@ -481,12 +495,9 @@ Arizona,Florida,Iowa have most chronic disease while Guam,Virgin Islands have le
 
 <br />
 
-> *Please email to: * <a href="#">teamcunyverse@sps.cuny.edu</a> *for any suggestion.*
-
 <footer class="border-top text-muted fixed-bottom">
-
+        *Please email to: * <a href="#">teamcunyverse@sps.cuny.edu</a> *for any suggestion.*
         DATA607 Project 3 - MSDS 2019 Program.
-
 </footer>
 
 <br />
