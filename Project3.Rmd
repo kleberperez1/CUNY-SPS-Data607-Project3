@@ -37,7 +37,7 @@ library(leaflet)
 
   <!-- <h3>DATA 607 Project 3 Most Valued Data Science Skills </h3> -->
   <p class="lead">RPUBS.COM, SQL, R SCRIPTS <br />AND RMARKDOWN FILES UPLOADED ON GITHUB REPO </p> 
-
+  
   </div>
 <!-- </div> -->
 
@@ -49,22 +49,24 @@ library(leaflet)
   
   <div>
   
-  MIA SIRACUSA &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a class="btn btn-dark btn-lg" href="http://rpubs.com/miasiracusa" role="button">RPUBS</a>
-  <a class="btn btn-dark btn-lg" href="https://github.com/miasiracusa/Data607" role="button">GITHUB</a>
-  <br />
-  JAVERN WILSON &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a class="btn btn-dark btn-lg" href="http://rpubs.com/javernw/jwDATA607wk8Proj3" role="button">RPUBS</a>
-  <a class="btn btn-dark btn-lg" href="https://github.com/javernw/DATA607GroupProjects" role="button">GITHUB</a>
-  <br />
-  YOHANNES DEVOCH 
-  <a class="btn btn-dark btn-lg" href="http://rpubs.com/jonygeta/data607projectbycunyverse" role="button">RPUBS</a>
-  <a class="btn btn-dark btn-lg" href="https://github.com/jonygeta/Data-607-Data-Science-Skills-Project-" role="button">GITHUB</a>
-  <br />
-  [Kleber Perez](https://www.linkedin.com/in/kleberperez/) 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a class="btn btn-dark btn-lg" href="http://rpubs.com/kleberperez/477939" role="button">RPUBS</a>
-  <a class="btn btn-dark btn-lg" href="https://github.com/kleberperez1/CUNY-SPS-Data607-Project3" role="button">GITHUB</a>
+  <a class="label label-default" href="#" target="_blank" role="button">
+  MIA SIRACUSA</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/miasiracusa" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/miasiracusa/Data607" role="button">GITHUB</a>
+  <br /><br />
+    <a class="label label-default" href="#" target="_blank" role="button">
+  JAVERN WILSON</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/javernw/jwDATA607wk8Proj3" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/javernw/DATA607GroupProjects" role="button">GITHUB</a>
+  <br /><br />
+    <a class="label label-default" href="#" target="_blank" role="button">
+  YOHANNES DEVOCH </a> &nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/jonygeta/data607projectbycunyverse" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/jonygeta/Data-607-Data-Science-Skills-Project-" role="button">GITHUB</a>
+  <br /><br />
+  <a class="label label-default" href="https://www.linkedin.com/in/kleberperez/" target="_blank" role="button">KLEBER PEREZ</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/kleberperez/477939" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/kleberperez1/CUNY-SPS-Data607-Project3" role="button">GITHUB</a>
   
   </div>
   </div>
@@ -453,7 +455,7 @@ ggplotly(ggplot(new_Tobacco_df, aes(x=State, y=Year, fill=Year)) +
   geom_bar(stat="identity") +  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(axis.text=element_text(size=6)) + ggtitle("Data collected Over the years for States Concerning Tobacco"))
 ```
 
-<br/> Kansas had a lot to say as most reports came from that state. Among the states there seems to be heavier reports between the years of 2008 and 2010.
+<br/> Kansas had a lot to say as most reports came from that state. Among the states there seems to be heavier reports between the years of 2011 and 2014.
 
 
 ```{r}
@@ -508,64 +510,57 @@ The dataset is missing several necessary details but with our practiced data sci
 
 </div>
 
+<br />
+
+
 <div class="jumbotron jumbotron-fluid">
+  <div class="btn btn-default btn-block">
 
-(1)  For project 3 on rpubs.com, SQL, R, scripts and RMarkdown files uploaded on GitHub.
-  <br />
+  <!-- <h3>DATA 607 Project 3 Most Valued Data Science Skills </h3> -->
+  <p class="lead">RPUBS.COM, SQL, R SCRIPTS <br />AND RMARKDOWN FILES UPLOADED ON GITHUB REPO </p> 
   
-<div class=""> 
-<div class="alert alert-info" role="alert"> 
- <p>Mia Siracusa &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="http://rpubs.com/miasiracusa" class="btn btn-default" role="button">&nbsp; rpubs &nbsp; </a> 
-  &nbsp; &nbsp; &nbsp;
-  <a href="https://github.com/miasiracusa/Data607" target="_blank" class="btn btn-default" role="button"> &nbsp; github &nbsp; </a>
- </p>
-</div> 
+  </div>
+<!-- </div> -->
 
-(2)  For project 3 on rpubs.com, SQL, R, scripts and RMarkdown files uploaded on GitHub.
-  <br />
+<!-- <div class="jumbotron jumbotron-fluid"> -->
+  <div class="container">
+  <div class="btn btn-info btn-block">
   
-<div class="alert alert-info" role="alert"> 
- <p>Javern Wilson &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="http://rpubs.com/javernw/jwDATA607wk8Proj3" class="btn btn-default" role="button">&nbsp; rpubs &nbsp; </a>
-  &nbsp; &nbsp; &nbsp;
-  <a href="https://github.com/javernw/DATA607GroupProjects" target="_blank" class="btn btn-default" role="button"> &nbsp; github &nbsp; </a>
- </p>
-</div> 
+  <hr class="my-4">
+  
+  <div>
+  
+  <a class="label label-default" href="#" target="_blank" role="button">
+  MIA SIRACUSA</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/miasiracusa" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/miasiracusa/Data607" role="button">GITHUB</a>
+  <br /><br />
+    <a class="label label-default" href="#" target="_blank" role="button">
+  JAVERN WILSON</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/javernw/jwDATA607wk8Proj3" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/javernw/DATA607GroupProjects" role="button">GITHUB</a>
+  <br /><br />
+    <a class="label label-default" href="#" target="_blank" role="button">
+  YOHANNES DEVOCH </a> &nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/jonygeta/data607projectbycunyverse" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/jonygeta/Data-607-Data-Science-Skills-Project-" role="button">GITHUB</a>
+  <br /><br />
+  <a class="label label-default" href="https://www.linkedin.com/in/kleberperez/" target="_blank" role="button">KLEBER PEREZ</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a class="label label-default" href="http://rpubs.com/kleberperez/477939" role="button">RPUBS</a>
+  <a class="label label-default" href="https://github.com/kleberperez1/CUNY-SPS-Data607-Project3" role="button">GITHUB</a>
+  
+  </div>
+  </div>
+  </div>
+</div>
 
-(3)  For project 3 on rpubs.com, SQL, R, scripts and RMarkdown files uploaded on GitHub.
-  <br />
-  
-<div class="alert alert-info" role="alert"> 
- <p>Yohannes Devoch &nbsp;&nbsp;
-  <a href="http://rpubs.com/javernw/jwDATA607wk8Proj3" class="btn btn-default" role="button">&nbsp; rpubs &nbsp; </a> 
-  &nbsp; &nbsp; &nbsp;
-  <a href="https://github.com/jonygeta/Data-607-Data-Science-Skills-Project-" target="_blank" class="btn btn-default" role="button"> &nbsp; github &nbsp; </a>
- </p>
-</div> 
-
-(4)  For project 3 on rpubs.com, SQL, R, scripts and RMarkdown files uploaded on GitHub.
-  <br />
-  
-<div class="alert alert-info" role="alert"> 
- <p>
-  [Kleber Perez](https://www.linkedin.com/in/kleberperez/) 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="http://rpubs.com/kleberperez/477939" class="btn btn-default" role="button">&nbsp; rpubs &nbsp; </a> 
-  &nbsp; &nbsp; &nbsp;
-  <a href="https://github.com/kleberperez1/CUNY-SPS-Data607-Project3" target="_blank" class="btn btn-default" role="button"> &nbsp; github &nbsp; </a>
- </p>
-</div> 
 
 </div> 
 </div>
 
-<br />
 
-* * *
-
-<br />
-<br />
+  <br />
+  <br />
 
 > *Please email to * <a href="mailto:teamcunyverse@spsmail.cuny.edu">teamcunyverse</a> *for any suggestion.*
 
@@ -573,6 +568,7 @@ The dataset is missing several necessary details but with our practiced data sci
         DATA 607 Project 3 - MSDS 2019 Program.
 </footer>
 
+<br />
 <br />
 <br />
 
