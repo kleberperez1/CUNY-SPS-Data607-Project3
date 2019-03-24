@@ -60,7 +60,7 @@ library(leaflet)
   <a class="label label-default" href="https://github.com/javernw/DATA607GroupProjects" role="button">GITHUB</a>
   <br /><br />
     <a class="label label-default" href="#" target="_blank" role="button">
-  YOHANNES DEVOCH </a> &nbsp;&nbsp;
+  YOHANNES DEBOCH </a> &nbsp;&nbsp;
   <a class="label label-default" href="http://rpubs.com/jonygeta/data607projectbycunyverse" role="button">RPUBS</a>
   <a class="label label-default" href="https://github.com/jonygeta/Data-607-Data-Science-Skills-Project-" role="button">GITHUB</a>
   <br /><br />
@@ -541,7 +541,7 @@ The dataset is missing several necessary details but with our practiced data sci
   <a class="label label-default" href="https://github.com/javernw/DATA607GroupProjects" role="button">GITHUB</a>
   <br /><br />
     <a class="label label-default" href="#" target="_blank" role="button">
-  YOHANNES DEVOCH </a> &nbsp;&nbsp;
+  YOHANNES DEBOCH </a> &nbsp;&nbsp;
   <a class="label label-default" href="http://rpubs.com/jonygeta/data607projectbycunyverse" role="button">RPUBS</a>
   <a class="label label-default" href="https://github.com/jonygeta/Data-607-Data-Science-Skills-Project-" role="button">GITHUB</a>
   <br /><br />
